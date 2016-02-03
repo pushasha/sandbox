@@ -1,0 +1,9 @@
+NUGET
+  remote: https://www.nuget.org/api/v2
+  specs:
+    FAKE (4.14.5)
+    GitVersion.CommandLine (3.3.0)
+HTTP
+  remote: http://dist.nuget.org
+  specs:
+    nuget.exe (/win-x86-commandline/latest/nuget.exe)
