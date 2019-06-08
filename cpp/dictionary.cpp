@@ -1,8 +1,13 @@
 #include "dictionary.h"
 #include <stdexcept>
 
-Dictionary::Dictionary()
-= default;
+const int NumEntries = 5;
+
+Dictionary::Dictionary():entries_(new KeyValuePair[NumEntries]){}
+
+Dictionary::~Dictionary(){
+    delete[] entries_;
+}
 
 void Dictionary::add(const std::string& key, int value)
 {
@@ -16,8 +21,7 @@ void Dictionary::add(const std::string& key, int value)
     }
 
     // this is a new key, so add it to free space
-    const int array_size = size_of_entries();
-    for (int i = 0; i < array_size; i++)
+    for (int i = 0; i < NumEntries; i++)
     {
         if (entries_[i].key.empty())
         {
@@ -44,8 +48,7 @@ bool Dictionary::remove(const std::string& key)
 
 void Dictionary::clear()
 {
-    const int array_size = size_of_entries();
-    for (int i = 0; i < array_size; ++i)
+    for (int i = 0; i < NumEntries; ++i)
     {
         entries_[i].clear();
     }
@@ -58,8 +61,7 @@ bool Dictionary::contains_key(const std::string& key)
 
 bool Dictionary::contains_value(int value)
 {
-    const int array_size = size_of_entries();
-    for (int i = 0; i < array_size; i++)
+    for (int i = 0; i < NumEntries; i++)
     {
         if (value == entries_[i].value)
         {
@@ -72,8 +74,7 @@ bool Dictionary::contains_value(int value)
 
 int Dictionary::index_of_key(const std::string& key)
 {
-    const int array_size = size_of_entries();
-    for (int i = 0; i < array_size; i++)
+    for (int i = 0; i < NumEntries; i++)
     {
         if (key == entries_[i].key)
         {

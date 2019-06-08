@@ -8,6 +8,7 @@ class Dictionary
 {
 public:
     Dictionary();
+    ~Dictionary();
     void add(const std::string& key, int value);
     bool remove(const std::string& key);
     int get_value(const std::string& key);
@@ -23,11 +24,8 @@ private:
         int value{};
         void clear();
     };
-    KeyValuePair entries_ [5];
+    KeyValuePair* entries_; //[5];
     int index_of_key(const std::string& key);
-    inline int size_of_entries(){
-        return sizeof(entries_) / sizeof(KeyValuePair);
-    }
 };
 
 #endif //CPP_DICTIONARY_H
