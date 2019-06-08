@@ -4,7 +4,7 @@
 Dictionary::Dictionary()
 = default;
 
-void Dictionary::add(std::string key, int value)
+void Dictionary::add(const std::string& key, int value)
 {
     // see if we already are storing something with this key
     int index = index_of_key(key);
@@ -30,7 +30,7 @@ void Dictionary::add(std::string key, int value)
     throw std::runtime_error("Dictionary full");
 }
 
-bool Dictionary::remove(std::string key)
+bool Dictionary::remove(const std::string& key)
 {
     int index = index_of_key(key);
     if (index < 0)
@@ -51,10 +51,9 @@ void Dictionary::clear()
     }
 }
 
-bool Dictionary::contains_key(std::string key)
+bool Dictionary::contains_key(const std::string& key)
 {
-    int index = index_of_key(key);
-    return index >= 0;
+    return index_of_key(key) >= 0;
 }
 
 bool Dictionary::contains_value(int value)
@@ -71,7 +70,7 @@ bool Dictionary::contains_value(int value)
     return false;
 }
 
-int Dictionary::index_of_key(std::string key)
+int Dictionary::index_of_key(const std::string& key)
 {
     const int array_size = size_of_entries();
     for (int i = 0; i < array_size; i++)
@@ -84,7 +83,7 @@ int Dictionary::index_of_key(std::string key)
     return -1;
 }
 
-int Dictionary::get_value(std::string key)
+int Dictionary::get_value(const std::string& key)
 {
     int index = index_of_key(key);
     if (index < 0)
@@ -95,7 +94,7 @@ int Dictionary::get_value(std::string key)
     return entries_[index].value;
 }
 
-int Dictionary::operator[](std::string key)
+int Dictionary::operator[](const std::string& key)
 {
     return get_value(key);
 }
@@ -103,14 +102,10 @@ int Dictionary::operator[](std::string key)
 Dictionary::KeyValuePair::KeyValuePair()
 = default;
 
-Dictionary::KeyValuePair::KeyValuePair(std::string key, int value)
-{
-    Dictionary::KeyValuePair::key = key;
-    Dictionary::KeyValuePair::value = value;
-}
+Dictionary::KeyValuePair::KeyValuePair(const std::string& key, int value): key(key), value(value){}
 
 void Dictionary::KeyValuePair::clear()
 {
-    Dictionary::KeyValuePair::key = "";
-    Dictionary::KeyValuePair::value = 0;
+    key.clear();
+    value = 0;
 }
