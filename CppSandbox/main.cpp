@@ -3,13 +3,18 @@
 
 int main() {
 
-    Dictionary dict = Dictionary();
-    dict.add("one", 1);
-    dict.add("two", 2);
-    dict.add("three", 3);
-    dict.add("four", 4);
-    dict.add("five", 5);
+    Dictionary<std::string, std::string> dict = Dictionary<std::string, std::string>();
+    dict.add("one", "1");
+    dict.add("two", "2");
+    dict.add("three", "3");
+    dict.add("four", "4");
+    dict.add("five", "5");
 
-    std::cout << dict["three"] << std::endl;
+    for (size_t i = 0; i < dict.size(); i++)
+    {
+        Dictionary<std::string, std::string>::KeyValuePair& pair = dict.get_entries()[i];
+        std::cout << "(" + pair.key + "," + pair.value + ")" << std::endl;
+    }
+
     return 0;
 }
