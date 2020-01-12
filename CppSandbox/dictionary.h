@@ -23,7 +23,7 @@ public:
         TValue value;
     };
 
-    Dictionary() : entries_(new KeyValuePair[NumEntries]) {}
+    Dictionary(unsigned int initial_capacity) : entries_(new KeyValuePair[initial_capacity]), capacity_(initial_capacity) {}
     ~Dictionary()
     {
         delete[] entries_;
@@ -40,18 +40,33 @@ public:
             return;
         }
 
-        // this is a new key, so add it to free space
-        for (int i = 0; i < NumEntries; i++)
+        if (num_entries_ + 1 > capacity_)
         {
-            if (entries_[i].key.empty())
+            std::cout << "Expanding dictionary from " << capacity_ << " to " << capacity_ + grow_size_<< std::endl;
+            // If we get here, it means there was no space left. Expand.
+            KeyValuePair* new_entries = new KeyValuePair[capacity_ + grow_size_];
+            capacity_ = capacity_ + grow_size_;
+
+            if (num_entries_ > capacity_)
             {
-                entries_[i] = KeyValuePair(key, value);
                 return;
             }
+
+            // Copy entries into new array
+            for (size_t i = 0; i < num_entries_; i++)
+            {
+                new_entries[i] = entries_[i];
+            }
+
+            // free up old array
+            delete[] entries_;
+
+            entries_ = new_entries;
         }
 
-        // If we get here, it means there was no space left. Throw exception.
-        throw std::runtime_error("Dictionary full");
+        // this is a new key, so add it to the first free space
+        entries_[num_entries_] = KeyValuePair(key, value);
+        num_entries_++;
     }
 
     bool remove(const TKey& key)
@@ -59,10 +74,21 @@ public:
         int index = index_of_key(key);
         if (index < 0)
         {
-            return false;
+            return false; // Entry with key does not exist, so nothing was removed.
         }
 
         entries_[index].~KeyValuePair();
+        
+        if ((unsigned int)index < num_entries_ - 1)
+        {
+            // Shift everything down
+            for (size_t i = index; i < num_entries_ - 1; i++)
+            {
+                entries_[i] = entries_[i + 1];
+            }
+        }
+
+        num_entries_--;
         return true;
     }
 
@@ -84,15 +110,17 @@ public:
 
     unsigned int size()
     {
-        return NumEntries;
+        return num_entries_;
     }
 
     void clear()
     {
-        for (int i = 0; i < NumEntries; ++i)
+        for (size_t i = 0; i < num_entries_; ++i)
         {
             entries_[i].~KeyValuePair();
         }
+
+        num_entries_ = 0;
     }
 
     bool contains_key(const TKey& key)
@@ -102,7 +130,7 @@ public:
 
     bool contains_value(const TValue& value)
     {
-        for (int i = 0; i < NumEntries; i++)
+        for (size_t i = 0; i < num_entries_; i++)
         {
             if (value == entries_[i].value)
             {
@@ -119,11 +147,13 @@ public:
     }
 
 private:
-    const int NumEntries = 5;
+    unsigned int grow_size_ = 1;
+    unsigned int capacity_ = 0;
+    unsigned int num_entries_ = 0;
     KeyValuePair* entries_;
     int index_of_key(const TKey& key)
     {
-        for (int i = 0; i < NumEntries; i++)
+        for (size_t i = 0; i < num_entries_; i++)
         {
             if (key == entries_[i].key)
             {
