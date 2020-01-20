@@ -11,22 +11,28 @@ class Dictionary
 public:
     struct KeyValuePair
     {
-        KeyValuePair() = default;
         KeyValuePair(const TKey& key, const TValue& value) : key(key), value(value) {}
+        KeyValuePair(const KeyValuePair& to_copy) : key(to_copy.key), value(to_copy.value) {}
         ~KeyValuePair()
         {
             key.~TKey();
             value.~TValue();
         }
-
+ 
         TKey key;
         TValue value;
     };
 
-    Dictionary(unsigned int initial_capacity) : entries_(new KeyValuePair[initial_capacity]), capacity_(initial_capacity) {}
+    Dictionary(unsigned int initial_capacity)
+    {
+        entries_= (KeyValuePair*) malloc(initial_capacity * sizeof(KeyValuePair));
+        capacity_ = initial_capacity;
+    }
+
     ~Dictionary()
     {
-        delete[] entries_;
+        destroy_all_entries();
+        free(entries_);
     }
 
     void add(const TKey& key, const TValue& value)
@@ -44,28 +50,25 @@ public:
         {
             std::cout << "Expanding dictionary from " << capacity_ << " to " << capacity_ + grow_size_<< std::endl;
             // If we get here, it means there was no space left. Expand.
-            KeyValuePair* new_entries = new KeyValuePair[capacity_ + grow_size_];
-            capacity_ = capacity_ + grow_size_;
-
-            if (num_entries_ > capacity_)
-            {
-                return;
-            }
+            capacity_ += grow_size_;
+            KeyValuePair* new_entries = (KeyValuePair*)malloc(capacity_ * sizeof(KeyValuePair));
 
             // Copy entries into new array
             for (size_t i = 0; i < num_entries_; i++)
             {
-                new_entries[i] = entries_[i];
+                new (new_entries + i) KeyValuePair(entries_[i]);
             }
 
             // free up old array
-            delete[] entries_;
+            destroy_all_entries();
+            free(entries_);
 
+            // assign new array to old pointer
             entries_ = new_entries;
         }
 
         // this is a new key, so add it to the first free space
-        entries_[num_entries_] = KeyValuePair(key, value);
+        new (entries_ + num_entries_) KeyValuePair(key, value);
         num_entries_++;
     }
 
@@ -115,11 +118,7 @@ public:
 
     void clear()
     {
-        for (size_t i = 0; i < num_entries_; ++i)
-        {
-            entries_[i].~KeyValuePair();
-        }
-
+        destroy_all_entries();
         num_entries_ = 0;
     }
 
@@ -161,6 +160,14 @@ private:
             }
         }
         return -1;
+    }
+
+    void destroy_all_entries()
+    {
+        for (size_t i = 0; i < num_entries_; ++i)
+        {
+            entries_[i].~KeyValuePair();
+        }
     }
 };
 
