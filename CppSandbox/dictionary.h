@@ -12,11 +12,23 @@ public:
     struct KeyValuePair
     {
         KeyValuePair(const TKey& key, const TValue& value) : key(key), value(value) {}
-        KeyValuePair(const KeyValuePair& to_copy) : key(to_copy.key), value(to_copy.value) {}
+        KeyValuePair(const KeyValuePair& to_copy) : key(to_copy.key), value(to_copy.value){}
+        KeyValuePair(KeyValuePair&& to_move)
+        {
+            key = std::move(to_move.key);
+            value = std::move(to_move.value); 
+        }
         ~KeyValuePair()
         {
             key.~TKey();
             value.~TValue();
+        }
+
+        KeyValuePair& operator =(KeyValuePair&& rhs)
+        {
+            key = std::move(rhs.key);
+            value = std::move(rhs.value);
+            return *this;
         }
  
         TKey key;
@@ -56,7 +68,7 @@ public:
             // Copy entries into new array
             for (size_t i = 0; i < num_entries_; i++)
             {
-                new (new_entries + i) KeyValuePair(entries_[i]);
+                new (new_entries + i) KeyValuePair(std::move(entries_[i]));
             }
 
             // free up old array
@@ -87,7 +99,7 @@ public:
             // Shift everything down
             for (size_t i = index; i < num_entries_ - 1; i++)
             {
-                entries_[i] = entries_[i + 1];
+                entries_[i] = std::move(entries_[i + 1]);
             }
         }
 
