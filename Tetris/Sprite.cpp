@@ -39,3 +39,8 @@ void Sprite::SetColor(byte red, byte green, byte blue, byte alpha)
 	DWORD color = ((DWORD(alpha)<<24) + (DWORD(red)<<16) + (DWORD(green)<<8) + DWORD(blue));
 	m_hgeSprite->SetColor(color);
 }
+
+void Sprite::SetColor(Color c)
+{
+	SetColor(c.r, c.g, c.b, 255);
+}

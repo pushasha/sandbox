@@ -3,6 +3,7 @@
 #include "HGE/hgesprite.h"
 #include "Vector2.h"
 #include "Core.h"
+#include "Color.h"
 
 class Sprite
 {
@@ -25,6 +26,7 @@ public:
 	Vector2 GetAnchorPoint();
 
 	void SetColor(byte red, byte green, byte blue, byte alpha);
+	void SetColor(Color c);
 	byte GetColorRed(){return (((m_hgeSprite->GetColor())>>16) & 0xFF);}
 	byte GetColorGreen(){return (((m_hgeSprite->GetColor())>>8) & 0xFF);}
 	byte GetColorBlue(){return ((m_hgeSprite->GetColor()) & 0xFF);}
