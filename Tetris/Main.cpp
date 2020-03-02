@@ -3,38 +3,36 @@
 #include "Sprite.h"
 #include "Tetromino.h"
 
-Tetromino* g_piece;
+Tetromino* g_current_piece;
 Vector2 g_pos;
-float g_angle = 0;
-const Vector2 g_vec_y = Vector2(0, c_cell_size);
-const Vector2 g_vec_x = Vector2(c_cell_size, 0);
 
 //Update loop
 bool Update()
 {
 	if (g_hge->Input_KeyUp(HGEK_UP))
 	{
-		g_pos -= g_vec_y;
+		g_current_piece->rotate();
 	}
 
 	if (g_hge->Input_KeyUp(HGEK_DOWN))
 	{
-		g_pos += g_vec_y;
+		g_current_piece->move(Tetromino::Direction::DOWN);
 	}
 
 	if (g_hge->Input_KeyUp(HGEK_LEFT))
 	{
-		g_pos -= g_vec_x;
+		g_current_piece->move(Tetromino::Direction::LEFT);
 	}
 
 	if (g_hge->Input_KeyUp(HGEK_RIGHT))
 	{
-		g_pos += g_vec_x;
+		g_current_piece->move(Tetromino::Direction::RIGHT);
 	}
 
 	if (g_hge->Input_KeyUp(HGEK_SPACE))
 	{
-		//Rotate();
+		
+		// TODO: Hard drop
 	}
 
 	return false;
@@ -45,7 +43,7 @@ bool Render()
 {
 	RenderBegin();
 
-	g_piece->render(g_square_sprite, g_pos);
+	g_current_piece->render(g_square_sprite);
 
 	RenderEnd();
 	return false;
@@ -53,14 +51,14 @@ bool Render()
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Initialize(320, 640, Update, Render);
+	Initialize(322, 640, Update, Render);
 
 	if(IsInitialized())
 	{
 		const char* path = "..//square_3px_border.png";
 		g_square_sprite = new Sprite(const_cast<char*>(path), Vector2(0, 0), Vector2(c_cell_size, c_cell_size));
-		g_pos = Vector2(5, 5);
-		g_piece = new Tetromino(Tetromino::Shape::Z);
+		g_pos = Vector2(1, 1);
+		g_current_piece = new Tetromino(Tetromino::Shape::Z);
 		Run();
 	}
 	
