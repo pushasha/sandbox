@@ -40,7 +40,7 @@ void Sprite::SetColor(byte red, byte green, byte blue, byte alpha)
 	m_hgeSprite->SetColor(color);
 }
 
-void Sprite::SetColor(Color c)
+void Sprite::SetColor(Colors::Color c)
 {
-	SetColor(c.r, c.g, c.b, 255);
+	SetColor(c.r, c.g, c.b, c.a);
 }

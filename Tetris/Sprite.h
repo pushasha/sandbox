@@ -26,7 +26,7 @@ public:
 	Vector2 GetAnchorPoint();
 
 	void SetColor(byte red, byte green, byte blue, byte alpha);
-	void SetColor(Color c);
+	void SetColor(Colors::Color c);
 	byte GetColorRed(){return (((m_hgeSprite->GetColor())>>16) & 0xFF);}
 	byte GetColorGreen(){return (((m_hgeSprite->GetColor())>>8) & 0xFF);}
 	byte GetColorBlue(){return ((m_hgeSprite->GetColor()) & 0xFF);}

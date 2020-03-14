@@ -89,6 +89,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <DisableSpecificWarnings>26812</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="GridSquare.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Tetromino.cpp" />
@@ -151,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="GridSquare.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Tetromino.h" />
     <ClInclude Include="Vector2.h" />
