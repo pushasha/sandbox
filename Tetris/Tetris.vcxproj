@@ -146,6 +146,7 @@
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="GridSquare.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Movement.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Tetromino.cpp" />
     <ClCompile Include="Vector2.cpp" />
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="Movement.h" />
     <ClInclude Include="GridSquare.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Tetromino.h" />

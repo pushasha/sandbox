@@ -4,6 +4,7 @@
 #include "Vector2.h"
 #include "Color.h"
 #include "Sprite.h"
+#include "Movement.h"
 
 typedef Vector2 V2;
 
@@ -63,20 +64,19 @@ class Tetromino
 {
 public:
 	enum Shape { I = 0, O, T, J, L, S, Z };
-	enum class Direction { DOWN, LEFT, RIGHT };
 	explicit Tetromino(Shape shape) : shape_(shape), rotation_(0), position_(Vector2(0,0)) {}
 	~Tetromino() {}
-	Vector2& get_pos();
+	const Vector2& get_pos() const;
 	void render(Sprite* block, const unsigned short int block_size, const unsigned short int border_size) const;
 	void rotate();
-	void move(const Direction dir);
+	void move(const Movement::Direction dir);
+	const Vector2* get_blocks() const;
 	
 	
 private:
 	Shape shape_;
 	char rotation_;
 	Vector2 position_;
-	static const Vector2 c_vec_x, c_vec_y;
 };
 
 #endif

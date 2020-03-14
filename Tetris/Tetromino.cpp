@@ -1,9 +1,6 @@
 #include "Tetromino.h"
 
-const Vector2 Tetromino::c_vec_y = Vector2(0, 1);
-const Vector2 Tetromino::c_vec_x = Vector2(1, 0);
-
-Vector2& Tetromino::get_pos()
+const Vector2& Tetromino::get_pos() const
 {
 	return position_;
 }
@@ -24,19 +21,13 @@ void Tetromino::rotate()
 	rotation_ = (rotation_ + 1) % c_num_rotations;
 }
 
-void Tetromino::move(const Tetromino::Direction dir)
+void Tetromino::move(const Movement::Direction dir)
 {
 	// TODO: Check bounds before allowing movement
-	switch (dir)
-	{
-		case Direction::DOWN:
-			position_ += c_vec_y;
-			break;
-		case Direction::LEFT:
-			position_ -= c_vec_x;
-			break;
-		case Direction::RIGHT:
-			position_ += c_vec_x;
-			break;
-	}
+	position_ += Movement::get_direction_vector(dir);
+}
+
+const Vector2* Tetromino::get_blocks() const
+{
+	return c_blocks[shape_][rotation_];
 }
