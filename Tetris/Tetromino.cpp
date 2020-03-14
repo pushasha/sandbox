@@ -12,7 +12,7 @@ void Tetromino::render(Sprite* block, const unsigned short int block_size, const
 {
 	Colors::Color c = c_shape_colors[shape_];
 	block->SetColor(c);
-	for (size_t i = 0; i < 4; i++)
+	for (size_t i = 0; i < c_num_blocks_per_tetromino; i++)
 	{
 		Vector2 block_pos = c_blocks[shape_][rotation_][i];
 		block->Render((block_pos + position_) * (block_size - border_size));
@@ -21,10 +21,10 @@ void Tetromino::render(Sprite* block, const unsigned short int block_size, const
 
 void Tetromino::rotate()
 {
-	rotation_ = (rotation_ + 1) % 4;
+	rotation_ = (rotation_ + 1) % c_num_rotations;
 }
 
-void Tetromino::move(const Direction& dir)
+void Tetromino::move(const Tetromino::Direction dir)
 {
 	// TODO: Check bounds before allowing movement
 	switch (dir)

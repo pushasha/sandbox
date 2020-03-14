@@ -7,7 +7,11 @@
 
 typedef Vector2 V2;
 
-static const V2 c_blocks[7][4][4] = // [shape][rotation][block]
+constexpr unsigned short int c_num_shapes = 7;
+constexpr unsigned short int c_num_blocks_per_tetromino = 4;
+constexpr unsigned short int c_num_rotations = 4;
+
+static const V2 c_blocks[c_num_shapes][c_num_rotations][c_num_blocks_per_tetromino] = // [shape][rotation][block]
 {
 	{ // I
 		{ V2(0,1), V2(1,1), V2(2,1), V2(3,1) }, // 0
@@ -53,7 +57,7 @@ static const V2 c_blocks[7][4][4] = // [shape][rotation][block]
 	}
 };
 
-static const Colors::Color c_shape_colors[7] = { Colors::c_color_cyan, Colors::c_color_yellow, Colors::c_color_magenta, Colors::c_color_blue, Colors::c_color_orange, Colors::c_color_green, Colors::c_color_red };
+static const Colors::Color c_shape_colors[c_num_shapes] = { Colors::c_color_cyan, Colors::c_color_yellow, Colors::c_color_magenta, Colors::c_color_blue, Colors::c_color_orange, Colors::c_color_green, Colors::c_color_red };
 
 class Tetromino
 {
@@ -65,7 +69,8 @@ public:
 	Vector2& get_pos();
 	void render(Sprite* block, const unsigned short int block_size, const unsigned short int border_size) const;
 	void rotate();
-	void move(const Direction& dir);
+	void move(const Direction dir);
+	
 	
 private:
 	Shape shape_;
