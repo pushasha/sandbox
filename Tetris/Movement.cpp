@@ -14,4 +14,9 @@ namespace Movement
                 return c_vec_right;
         }
     }
+
+    const Movement::Rotation Movement::get_next_rotation(Movement::Rotation rot)
+    {
+        return (Movement::Rotation) (((int)rot + 1) % (int)Movement::Rotation::NUM_ROTATIONS);
+    }
 }

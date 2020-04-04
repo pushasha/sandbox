@@ -63,19 +63,21 @@ static const Colors::Color c_shape_colors[c_num_shapes] = { Colors::c_color_cyan
 class Tetromino
 {
 public:
-	enum Shape { I = 0, O, T, J, L, S, Z };
-	explicit Tetromino(Shape shape) : shape_(shape), rotation_(0), position_(Vector2(0,0)) {}
+	enum class Shape { I = 0, O, T, J, L, S, Z };
+	explicit Tetromino(Shape shape) : shape_(shape), rotation_(Movement::Rotation::ZERO), position_(Vector2(0,0)) {}
 	~Tetromino() {}
+	Shape get_shape() const;
 	const Vector2& get_pos() const;
+	Movement::Rotation get_rotation() const;
 	void render(Sprite* block, const unsigned short int block_size, const unsigned short int border_size) const;
 	void rotate();
 	void move(const Movement::Direction dir);
 	const Vector2* get_blocks() const;
-	
+	static const Vector2* get_blocks_for_shape_rotation(Shape shape, Movement::Rotation rot);
 	
 private:
 	Shape shape_;
-	char rotation_;
+	Movement::Rotation rotation_;
 	Vector2 position_;
 };
 

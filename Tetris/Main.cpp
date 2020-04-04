@@ -12,16 +12,14 @@ GridSquare g_grid[c_grid_width][c_grid_height] = {};
 int g_tick_count = 0;
 int g_ticks_before_drop = 1000;
 
-bool collides(const Tetromino* const piece, const GridSquare(&grid)[c_grid_width][c_grid_height], Movement::Direction dir)
+bool collides(const Vector2& pos, Tetromino::Shape shape, Movement::Rotation rot, const GridSquare(&grid)[c_grid_width][c_grid_height])
 {
-	const Vector2 piece_pos = (piece->get_pos()) + Movement::get_direction_vector(dir);
-
 	// for each block...
-	const Vector2* blocks = piece->get_blocks();
+	const Vector2* blocks = Tetromino::get_blocks_for_shape_rotation(shape, rot);
 
 	for (unsigned short i = 0; i < c_num_blocks_per_tetromino; i++)
 	{
-		const Vector2 block_pos = blocks[i] + piece_pos;
+		const Vector2 block_pos = blocks[i] + pos;
 
 		// Make sure it's within grid bounds. If not, report collision.
 		if (block_pos.Y() >= c_grid_height || block_pos.X() >= c_grid_width || block_pos.X() < 0)
@@ -38,19 +36,35 @@ bool collides(const Tetromino* const piece, const GridSquare(&grid)[c_grid_width
 	return false;
 }
 
+bool rotation_collides(const Tetromino* const piece, const GridSquare(&grid)[c_grid_width][c_grid_height])
+{
+	Movement::Rotation rotated = Movement::get_next_rotation(piece->get_rotation());
+	return collides(piece->get_pos(), piece->get_shape(), rotated, grid);
+}
+
+bool direction_collides(const Tetromino* const piece, const GridSquare(&grid)[c_grid_width][c_grid_height], Movement::Direction dir)
+{
+	const Vector2 piece_pos = (piece->get_pos()) + Movement::get_direction_vector(dir);
+
+	return collides(piece_pos, piece->get_shape(), piece->get_rotation(), grid);
+}
+
 //Update loop
 bool Update()
 {
 	bool input_processed = false;
 	if (g_hge->Input_KeyUp(HGEK_UP))
 	{
-		g_current_piece->rotate();
+		if (!rotation_collides(g_current_piece, g_grid)) 
+		{
+			g_current_piece->rotate();
+		}
 		input_processed = true;
 	}
 
 	if (!input_processed && g_hge->Input_KeyUp(HGEK_DOWN))
 	{
-		if (!collides(g_current_piece, g_grid, Movement::Direction::DOWN))
+		if (!direction_collides(g_current_piece, g_grid, Movement::Direction::DOWN))
 		{
 			g_current_piece->move(Movement::Direction::DOWN);
 		}
@@ -59,7 +73,7 @@ bool Update()
 
 	if (!input_processed && g_hge->Input_KeyUp(HGEK_LEFT))
 	{
-		if (!collides(g_current_piece, g_grid, Movement::Direction::LEFT))
+		if (!direction_collides(g_current_piece, g_grid, Movement::Direction::LEFT))
 		{
 			g_current_piece->move(Movement::Direction::LEFT);
 		}
@@ -68,7 +82,7 @@ bool Update()
 
 	if (!input_processed && g_hge->Input_KeyUp(HGEK_RIGHT))
 	{
-		if (!collides(g_current_piece, g_grid, Movement::Direction::RIGHT))
+		if (!direction_collides(g_current_piece, g_grid, Movement::Direction::RIGHT))
 		{
 			g_current_piece->move(Movement::Direction::RIGHT);
 		}
@@ -87,7 +101,7 @@ bool Update()
 		return false;
 	}
 
-	if (collides(g_current_piece, g_grid, Movement::Direction::DOWN))
+	if (direction_collides(g_current_piece, g_grid, Movement::Direction::DOWN))
 	{
 
 		// TODO: lock in place
