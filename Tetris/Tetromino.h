@@ -63,7 +63,7 @@ static const Colors::Color c_shape_colors[c_num_shapes] = { Colors::c_color_cyan
 class Tetromino
 {
 public:
-	enum class Shape { I = 0, O, T, J, L, S, Z };
+	enum class Shape { I = 0, O, T, J, L, S, Z, NUM_SHAPES};
 	explicit Tetromino(Shape shape) : shape_(shape), rotation_(Movement::Rotation::ZERO), position_(Vector2(0,0)) {}
 	~Tetromino() {}
 	Shape get_shape() const;

@@ -3,51 +3,12 @@
 #include "Sprite.h"
 #include "Tetromino.h"
 #include "GridSquare.h"
+#include "Grid.h"
 
-constexpr int c_grid_width = 10;
-constexpr int c_grid_height = 20;
-
+Grid* g_grid;
 Tetromino* g_current_piece;
-GridSquare g_grid[c_grid_width][c_grid_height] = {};
 int g_tick_count = 0;
 int g_ticks_before_drop = 1000;
-
-bool collides(const Vector2& pos, Tetromino::Shape shape, Movement::Rotation rot, const GridSquare(&grid)[c_grid_width][c_grid_height])
-{
-	// for each block...
-	const Vector2* blocks = Tetromino::get_blocks_for_shape_rotation(shape, rot);
-
-	for (unsigned short i = 0; i < c_num_blocks_per_tetromino; i++)
-	{
-		const Vector2 block_pos = blocks[i] + pos;
-
-		// Make sure it's within grid bounds. If not, report collision.
-		if (block_pos.Y() >= c_grid_height || block_pos.X() >= c_grid_width || block_pos.X() < 0)
-		{
-			return true;
-		}
-
-		if (grid[(int)block_pos.X()][(int)block_pos.Y()].is_filled())
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool rotation_collides(const Tetromino* const piece, const GridSquare(&grid)[c_grid_width][c_grid_height])
-{
-	Movement::Rotation rotated = Movement::get_next_rotation(piece->get_rotation());
-	return collides(piece->get_pos(), piece->get_shape(), rotated, grid);
-}
-
-bool direction_collides(const Tetromino* const piece, const GridSquare(&grid)[c_grid_width][c_grid_height], Movement::Direction dir)
-{
-	const Vector2 piece_pos = (piece->get_pos()) + Movement::get_direction_vector(dir);
-
-	return collides(piece_pos, piece->get_shape(), piece->get_rotation(), grid);
-}
 
 //Update loop
 bool Update()
@@ -55,7 +16,7 @@ bool Update()
 	bool input_processed = false;
 	if (g_hge->Input_KeyUp(HGEK_UP))
 	{
-		if (!rotation_collides(g_current_piece, g_grid)) 
+		if (!g_grid->rotation_collides(g_current_piece)) 
 		{
 			g_current_piece->rotate();
 		}
@@ -64,7 +25,7 @@ bool Update()
 
 	if (!input_processed && g_hge->Input_KeyUp(HGEK_DOWN))
 	{
-		if (!direction_collides(g_current_piece, g_grid, Movement::Direction::DOWN))
+		if (!g_grid->direction_collides(g_current_piece, Movement::Direction::DOWN))
 		{
 			g_current_piece->move(Movement::Direction::DOWN);
 		}
@@ -73,7 +34,7 @@ bool Update()
 
 	if (!input_processed && g_hge->Input_KeyUp(HGEK_LEFT))
 	{
-		if (!direction_collides(g_current_piece, g_grid, Movement::Direction::LEFT))
+		if (!g_grid->direction_collides(g_current_piece, Movement::Direction::LEFT))
 		{
 			g_current_piece->move(Movement::Direction::LEFT);
 		}
@@ -82,7 +43,7 @@ bool Update()
 
 	if (!input_processed && g_hge->Input_KeyUp(HGEK_RIGHT))
 	{
-		if (!direction_collides(g_current_piece, g_grid, Movement::Direction::RIGHT))
+		if (!g_grid->direction_collides(g_current_piece, Movement::Direction::RIGHT))
 		{
 			g_current_piece->move(Movement::Direction::RIGHT);
 		}
@@ -101,7 +62,7 @@ bool Update()
 		return false;
 	}
 
-	if (direction_collides(g_current_piece, g_grid, Movement::Direction::DOWN))
+	if (g_grid->direction_collides(g_current_piece, Movement::Direction::DOWN))
 	{
 
 		// TODO: lock in place
@@ -120,14 +81,7 @@ bool Render()
 {
 	RenderBegin();
 
-	for (size_t i = 0; i < c_grid_width; i++)
-	{
-		for (size_t j = 0; j < c_grid_height; j++)
-		{
-			g_grid[i][j].render(g_square_sprite, Vector2(i, j));
-		}
-	}
-
+	g_grid->render();
 	g_current_piece->render(g_square_sprite, c_block_size, c_border_size);
 
 	RenderEnd();
@@ -136,8 +90,8 @@ bool Render()
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	int width = ((c_block_size - c_border_size) * c_grid_width) + c_border_size;
-	int height = ((c_block_size - c_border_size) * c_grid_height) + c_border_size;
+	int width = ((c_block_size - c_border_size) * Grid::c_grid_width) + c_border_size;
+	int height = ((c_block_size - c_border_size) * Grid::c_grid_height) + c_border_size;
 	Initialize(width, height, Update, Render);
 
 	if(IsInitialized())
@@ -145,6 +99,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		const char* path = "..//square_3px_border.png";
 		g_square_sprite = new Sprite(const_cast<char*>(path), Vector2(0, 0), Vector2(c_block_size, c_block_size));
 		g_current_piece = new Tetromino(Tetromino::Shape::Z);
+		g_grid = new Grid();
 		Run();
 	}
 	
