@@ -14,12 +14,14 @@ public:
     bool direction_collides(const Tetromino* const piece, Movement::Direction dir) const;
     void add_tetromino(const Tetromino* const piece);
     void hard_drop(Tetromino* const piece);
+    void check_and_clear_rows(const Tetromino* const piece);
     void render() const;
     // TODO: Convert grid_ to be dynamically allocated, the free appropriately
 
 private:
     GridSquare grid_[c_grid_width][c_grid_height] = {};
     bool collides(const Vector2& pos, Tetromino::Shape shape, Movement::Rotation rot) const;
+    void clear_row(int row);
 };
 
 #endif

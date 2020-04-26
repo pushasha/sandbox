@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include <vector>
 
 bool Grid::collides(const Vector2& pos, Tetromino::Shape shape, Movement::Rotation rot) const
 {
@@ -22,6 +23,17 @@ bool Grid::collides(const Vector2& pos, Tetromino::Shape shape, Movement::Rotati
 	}
 
 	return false;
+}
+
+void Grid::clear_row(int row)
+{
+	for (size_t i = 0; i < c_grid_width; i++)
+	{
+		grid_[i][row].clear();
+	}
+
+	// TODO: move everything above this row down
+
 }
 
 bool Grid::rotation_collides(const Tetromino* const piece) const
@@ -82,6 +94,60 @@ void Grid::hard_drop(Tetromino* const piece)
 
 	const Vector2 new_pos = Vector2(piece->get_pos().X(), highest_origin_y);
 	piece->move(new_pos);
+}
+
+void Grid::check_and_clear_rows(const Tetromino* const piece)
+{
+	std::vector<int> rows_to_check = std::vector<int>();
+	std::vector<int> rows_to_clear = std::vector<int>();
+
+	const Vector2* current_blocks = piece->get_block_positions();
+
+	// consolidate rows to check
+	for (size_t i = 0; i < Tetromino::c_num_blocks_per_tetromino; i++)
+	{
+		bool already_checked = false;
+		for (size_t j = 0; j < rows_to_check.size(); j++)
+		{
+			if (rows_to_check[j] == (int)current_blocks[i].Y())
+			{
+				already_checked = true;
+				break;
+			}
+		}
+
+		if (!already_checked)
+		{
+			rows_to_check.push_back((int)current_blocks[i].Y());
+		}
+	}
+
+	// check rows to clear
+	for (size_t i = 0; i < rows_to_check.size(); i++)
+	{
+		int row_to_check = rows_to_check[i];
+
+		// check if clear
+		bool found_empty = false;
+		for (size_t j = 0; j < c_grid_width; j++)
+		{
+			if (!grid_[j][row_to_check].is_filled())
+			{
+				found_empty = true;
+				break;
+			}
+		}
+
+		if (!found_empty)
+		{
+			rows_to_clear.push_back(rows_to_check[i]);
+		}
+	}
+
+	for (size_t i = 0; i < rows_to_clear.size(); i++)
+	{
+		clear_row(rows_to_clear[i]);
+	}
 }
 
 void Grid::render() const

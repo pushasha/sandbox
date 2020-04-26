@@ -29,12 +29,14 @@ bool try_spawn_piece(Tetromino*& piece)
 //Update loop
 bool Update()
 {
-	if (g_tetromino_locked)
+	if (g_tetromino_locked && g_current_piece != nullptr)
 	{
+		g_grid->check_and_clear_rows(g_current_piece);
+		
 		delete g_current_piece;
 		g_current_piece = nullptr;
-
 		g_tetromino_locked = false;
+		
 		return false;
 	}
 
