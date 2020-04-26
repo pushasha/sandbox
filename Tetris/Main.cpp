@@ -6,8 +6,11 @@
 #include "Grid.h"
 #include <stdlib.h>
 
+const Vector2 c_spawn_x = Vector2((float)(Grid::c_grid_width / 2), 0);
+
 Grid* g_grid;
-Tetromino* g_current_piece;
+Tetromino* g_current_piece = nullptr;
+bool g_tetromino_locked;
 int g_tick_count = 0;
 int g_ticks_before_drop = 1000;
 
@@ -19,13 +22,22 @@ bool try_spawn_piece(Tetromino*& piece)
 	}
 
 	Tetromino::Shape shape = (Tetromino::Shape)(rand() % (int)Tetromino::Shape::NUM_SHAPES);
-	piece = new Tetromino(shape);
+	piece = new Tetromino(shape, c_spawn_x);
 	return true;
 }
 
 //Update loop
 bool Update()
 {
+	if (g_tetromino_locked)
+	{
+		delete g_current_piece;
+		g_current_piece = nullptr;
+
+		g_tetromino_locked = false;
+		return false;
+	}
+
 	try_spawn_piece(g_current_piece);
 
 	bool input_processed = false;
@@ -80,8 +92,7 @@ bool Update()
 	if (g_grid->direction_collides(g_current_piece, Movement::Direction::DOWN))
 	{
 		g_grid->add_tetromino(g_current_piece);
-		delete g_current_piece;
-		g_current_piece = nullptr;
+		g_tetromino_locked = true;
 	}
 	else
 	{
@@ -118,7 +129,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 		const char* path = "..//square_3px_border.png";
 		g_square_sprite = new Sprite(const_cast<char*>(path), Vector2(0, 0), Vector2(c_block_size, c_block_size));
-		g_current_piece = new Tetromino(Tetromino::Shape::Z);
 		g_grid = new Grid();
 		Run();
 	}

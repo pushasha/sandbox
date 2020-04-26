@@ -49,12 +49,32 @@ const V2 Tetromino::c_blocks[c_num_shapes][c_num_rotations][c_num_blocks_per_tet
 };
 
 
-Tetromino::Tetromino(Shape shape) : shape_(shape), rotation_(Movement::Rotation::ZERO), position_(Vector2(0, 0)), block_positions_(new Vector2[c_num_blocks_per_tetromino])
+Tetromino::Tetromino(Shape shape, Vector2 pos) : shape_(shape), rotation_(Movement::Rotation::ZERO), block_positions_(new Vector2[c_num_blocks_per_tetromino])
 {
 	const Vector2* shape_blocks = get_blocks_for_shape_rotation(shape_, rotation_);
+
+	// get width of block to determine start pos delta
+	float smallest_x = -1;
+	float largest_x = -1;
 	for (size_t i = 0; i < c_num_blocks_per_tetromino; i++)
 	{
-		block_positions_[i] = shape_blocks[i];
+		Vector2 block_pos = shape_blocks[i];
+		if (block_pos.X() < smallest_x || smallest_x == -1)
+		{
+			smallest_x = block_pos.X();
+		}
+
+		if (block_pos.X() > largest_x || largest_x == -1)
+		{
+			largest_x = block_pos.X();
+		}
+	}
+	int half_width = ((largest_x - smallest_x) / 2) + 1;
+	position_ = Vector2(pos.X() - half_width, pos.Y());
+	
+	for (size_t i = 0; i < c_num_blocks_per_tetromino; i++)
+	{
+		block_positions_[i] = shape_blocks[i] + position_;
 	}
 }
 

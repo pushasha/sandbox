@@ -14,7 +14,7 @@ public:
 	static constexpr unsigned short int c_num_blocks_per_tetromino = 4;
 	enum class Shape { I = 0, O, T, J, L, S, Z, NUM_SHAPES};
 
-	explicit Tetromino(Shape shape);
+	Tetromino(Shape shape, Vector2 pos);
 	~Tetromino() { delete[] block_positions_; }
 	Shape get_shape() const;
 	const Colors::Color& get_color() const;
