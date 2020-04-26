@@ -6,6 +6,8 @@ namespace Movement
     {
         switch (dir)
         {
+            case Direction::UP:
+            return c_vec_up;
             case Direction::DOWN:
                 return c_vec_down;
             case Direction::LEFT:

@@ -4,17 +4,32 @@
 #include "Tetromino.h"
 #include "GridSquare.h"
 #include "Grid.h"
+#include <stdlib.h>
 
 Grid* g_grid;
 Tetromino* g_current_piece;
 int g_tick_count = 0;
 int g_ticks_before_drop = 1000;
 
+bool try_spawn_piece(Tetromino*& piece)
+{
+	if (piece != nullptr)
+	{
+		return false;
+	}
+
+	Tetromino::Shape shape = (Tetromino::Shape)(rand() % (int)Tetromino::Shape::NUM_SHAPES);
+	piece = new Tetromino(shape);
+	return true;
+}
+
 //Update loop
 bool Update()
 {
+	try_spawn_piece(g_current_piece);
+
 	bool input_processed = false;
-	if (g_hge->Input_KeyUp(HGEK_UP))
+	if (g_hge->Input_KeyDown(HGEK_UP))
 	{
 		if (!g_grid->rotation_collides(g_current_piece)) 
 		{
@@ -23,7 +38,7 @@ bool Update()
 		input_processed = true;
 	}
 
-	if (!input_processed && g_hge->Input_KeyUp(HGEK_DOWN))
+	if (!input_processed && g_hge->Input_KeyDown(HGEK_DOWN))
 	{
 		if (!g_grid->direction_collides(g_current_piece, Movement::Direction::DOWN))
 		{
@@ -32,7 +47,7 @@ bool Update()
 		input_processed = true;
 	}
 
-	if (!input_processed && g_hge->Input_KeyUp(HGEK_LEFT))
+	if (!input_processed && g_hge->Input_KeyDown(HGEK_LEFT))
 	{
 		if (!g_grid->direction_collides(g_current_piece, Movement::Direction::LEFT))
 		{
@@ -41,7 +56,7 @@ bool Update()
 		input_processed = true;
 	}
 
-	if (!input_processed && g_hge->Input_KeyUp(HGEK_RIGHT))
+	if (!input_processed && g_hge->Input_KeyDown(HGEK_RIGHT))
 	{
 		if (!g_grid->direction_collides(g_current_piece, Movement::Direction::RIGHT))
 		{
@@ -52,7 +67,7 @@ bool Update()
 
 	if (!input_processed && g_hge->Input_KeyUp(HGEK_SPACE))
 	{
-		// TODO: Hard drop
+		g_grid->hard_drop(g_current_piece);
 		input_processed = true;
 	}
 
@@ -64,8 +79,9 @@ bool Update()
 
 	if (g_grid->direction_collides(g_current_piece, Movement::Direction::DOWN))
 	{
-
-		// TODO: lock in place
+		g_grid->add_tetromino(g_current_piece);
+		delete g_current_piece;
+		g_current_piece = nullptr;
 	}
 	else
 	{
@@ -82,7 +98,11 @@ bool Render()
 	RenderBegin();
 
 	g_grid->render();
-	g_current_piece->render(g_square_sprite, c_block_size, c_border_size);
+
+	if (g_current_piece != nullptr)
+	{
+		g_current_piece->render(g_square_sprite, c_block_size, c_border_size);
+	}
 
 	RenderEnd();
 	return false;
@@ -107,4 +127,3 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	return 0;
 }
-
