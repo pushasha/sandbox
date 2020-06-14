@@ -25,15 +25,44 @@ bool Grid::collides(const Vector2& pos, Tetromino::Shape shape, Movement::Rotati
 	return false;
 }
 
+void Grid::move_row_down(int row, int amount)
+{
+	if (amount <= 0) 
+	{
+		return;
+	}
+
+	for (size_t i = 0; i < c_grid_width; i++)
+	{
+		grid_[i][row + amount] = grid_[i][row];
+	}
+}
+
 void Grid::clear_row(int row)
 {
 	for (size_t i = 0; i < c_grid_width; i++)
 	{
 		grid_[i][row].clear();
 	}
+}
 
-	// TODO: move everything above this row down
+bool Grid::is_row_filled(int row) 
+{
+	// check if clear
+	for (size_t j = 0; j < c_grid_width; j++)
+	{
+		if (!grid_[j][row].is_filled())
+		{
+			return false;
+		}
+	}
 
+	return true;
+}
+
+bool Grid::collides(const Tetromino* const piece) const
+{
+	return collides(piece->get_pos(), piece->get_shape(), piece->get_rotation());
 }
 
 bool Grid::rotation_collides(const Tetromino* const piece) const
@@ -98,55 +127,34 @@ void Grid::hard_drop(Tetromino* const piece)
 
 void Grid::check_and_clear_rows(const Tetromino* const piece)
 {
-	std::vector<int> rows_to_check = std::vector<int>();
-	std::vector<int> rows_to_clear = std::vector<int>();
-
 	const Vector2* current_blocks = piece->get_block_positions();
 
-	// consolidate rows to check
+	// find max Y of tetromino (to start checking cleared rows)
+	int max_y = 0;
 	for (size_t i = 0; i < Tetromino::c_num_blocks_per_tetromino; i++)
 	{
-		bool already_checked = false;
-		for (size_t j = 0; j < rows_to_check.size(); j++)
+		int block_y = current_blocks[i].Y();
+		if (block_y > max_y)
 		{
-			if (rows_to_check[j] == (int)current_blocks[i].Y())
-			{
-				already_checked = true;
-				break;
-			}
-		}
-
-		if (!already_checked)
-		{
-			rows_to_check.push_back((int)current_blocks[i].Y());
+			max_y = block_y;
 		}
 	}
 
-	// check rows to clear
-	for (size_t i = 0; i < rows_to_check.size(); i++)
-	{
-		int row_to_check = rows_to_check[i];
+	int num_cleared_rows = 0;
 
+	// check rows to clear, starting from max_y
+	for (int i = max_y; i >= 0; i--)
+	{
 		// check if clear
-		bool found_empty = false;
-		for (size_t j = 0; j < c_grid_width; j++)
+		if (!is_row_filled(i))
 		{
-			if (!grid_[j][row_to_check].is_filled())
-			{
-				found_empty = true;
-				break;
-			}
+			move_row_down(i, num_cleared_rows);
+			continue;
 		}
 
-		if (!found_empty)
-		{
-			rows_to_clear.push_back(rows_to_check[i]);
-		}
-	}
-
-	for (size_t i = 0; i < rows_to_clear.size(); i++)
-	{
-		clear_row(rows_to_clear[i]);
+		// row is filled, clear
+		clear_row(i);
+		num_cleared_rows++;
 	}
 }
 

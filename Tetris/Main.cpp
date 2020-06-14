@@ -4,33 +4,44 @@
 #include "Tetromino.h"
 #include "GridSquare.h"
 #include "Grid.h"
+#include "HGE/hgefont.h"
 #include <stdlib.h>
 
 const Vector2 c_spawn_x = Vector2((float)(Grid::c_grid_width / 2), 0);
+const int c_ticks_before_drop = 1000;
+const int c_ticks_before_clear = 2;
 
 Grid* g_grid;
 Tetromino* g_current_piece = nullptr;
 bool g_tetromino_locked;
+bool g_game_lost = false;
 int g_tick_count = 0;
-int g_ticks_before_drop = 1000;
 
 bool try_spawn_piece(Tetromino*& piece)
 {
-	if (piece != nullptr)
-	{
-		return false;
-	}
-
 	Tetromino::Shape shape = (Tetromino::Shape)(rand() % (int)Tetromino::Shape::NUM_SHAPES);
 	piece = new Tetromino(shape, c_spawn_x);
-	return true;
+	return !g_grid->collides(piece);
 }
 
 //Update loop
 bool Update()
 {
+	if (g_game_lost)
+	{
+		return false;
+	}
+
 	if (g_tetromino_locked && g_current_piece != nullptr)
 	{
+		// add slight delay after tetromino is locked 
+		if (g_tick_count < c_ticks_before_clear)
+		{
+			g_tick_count++;
+			return false;
+		}
+		g_tick_count = 0;
+
 		g_grid->check_and_clear_rows(g_current_piece);
 		
 		delete g_current_piece;
@@ -40,8 +51,12 @@ bool Update()
 		return false;
 	}
 
-	try_spawn_piece(g_current_piece);
-
+	if (g_current_piece == nullptr && !try_spawn_piece(g_current_piece))
+	{
+		g_game_lost = true;
+		return false;
+	}
+	
 	bool input_processed = false;
 	if (g_hge->Input_KeyDown(HGEK_UP))
 	{
@@ -85,7 +100,7 @@ bool Update()
 		input_processed = true;
 	}
 
-	if (g_tick_count < g_ticks_before_drop)
+	if (g_tick_count < c_ticks_before_drop)
 	{
 		g_tick_count++;
 		return false;
@@ -110,11 +125,18 @@ bool Render()
 {
 	RenderBegin();
 
-	g_grid->render();
-
-	if (g_current_piece != nullptr)
+	if (g_game_lost)
 	{
-		g_current_piece->render(g_square_sprite, c_block_size, c_border_size);
+		// TODO: render text
+	}
+	else
+	{
+		g_grid->render();
+
+		if (g_current_piece != nullptr)
+		{
+			g_current_piece->render(g_square_sprite, c_block_size, c_border_size);
+		}
 	}
 
 	RenderEnd();
@@ -129,8 +151,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	if(IsInitialized())
 	{
-		const char* path = "..//square_3px_border.png";
-		g_square_sprite = new Sprite(const_cast<char*>(path), Vector2(0, 0), Vector2(c_block_size, c_block_size));
+		const char* sprite_path = "..//square_3px_border.png";
+		g_square_sprite = new Sprite(const_cast<char*>(sprite_path), Vector2(0, 0), Vector2(c_block_size, c_block_size));
 		g_grid = new Grid();
 		Run();
 	}
