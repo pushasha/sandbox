@@ -6,10 +6,12 @@
 // A test class that wraps an int
 class Blob {
 public:
+    Blob() : Blob(0){};
     explicit Blob(int arg);
-    Blob(Blob& b) = delete;
+    Blob(const Blob& blob);
     ~Blob();
-
+    bool operator==(const Blob& rhs) const;
+    bool operator!=(const Blob& rhs) const;
 private:
     int member_int;
 };
