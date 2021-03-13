@@ -1,9 +1,10 @@
 #include <iostream>
 #include "Stack.h"
+#include "Blob.h"
 
 int main()
 {
-    Collections::Stack* stack = new Collections::Stack(2);
+    Collections::Stack<Blob>* stack = new Collections::Stack<Blob>(2);
     log("pushin'...");
     stack->push(Blob(9));
 

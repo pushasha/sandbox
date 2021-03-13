@@ -3,26 +3,108 @@
 
 #include "CommonTypes.h"
 #include "CollectionsCommon.h"
-#include "Blob.h" // TODO: Make this templated
+#include "CommonExceptions.h"
+#include "Utils.h"
 
 namespace Collections {
+template<class T>
 class Stack {
 public:
-    Stack() : Stack(c_default_capacity){}
-    explicit Stack(uint initial_capacity);
-    virtual ~Stack();
-    void clear();
-    bool contains(const Blob& item) const;
-    Blob pop();
-    void push(Blob&& item) noexcept;
-    void push(const Blob& item);
-    const Blob& peek() const;
+    Stack()
+            :Stack(c_default_capacity) { }
+    explicit Stack(uint initial_capacity)
+    {
+        size = 0;
+        capacity = initial_capacity;
+        array = new T[capacity];
+    }
+
+    ~Stack()
+    {
+        size = 0;
+        capacity = 0;
+        delete[] array;
+    }
+
+    void clear()
+    {
+        for (uint i = 0; i < size; i ++) {
+            // Destroy each item, but don't delete!
+            // Delete will give mem back to OS. We want to hold onto it.
+            array[i].~T();
+        }
+
+        size = 0;
+    }
+
+    bool contains(const T& item) const
+    {
+        for (uint i = 0; i < size; i ++) {
+            if (item == array[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    T pop()
+    {
+        if (size == 0) {
+            throw Exceptions::InvalidOperationException("Cannot use pop() on an empty Stack.");
+        }
+
+        const T& to_pop = array[size - 1];
+        size --;
+
+        return to_pop;
+    }
+
+    void push(T&& item)
+    {
+        if (size == capacity) {
+            resize();
+        }
+
+        array[size] = item;
+        size ++;
+    }
+
+    void push(const T& item)
+    {
+        if (size == capacity) {
+            resize();
+        }
+
+        array[size] = item;
+        size ++;
+    }
+
+    const T& peek() const
+    {
+        if (size == 0) {
+            throw Exceptions::InvalidOperationException("Cannot use peek() on an empty Stack.");
+        }
+
+        return array[size - 1];
+    }
     // TODO: add begin/end iterator stuff
 private:
-    uint size;
-    uint capacity;
-    Blob* array;
-    void resize();
+    uint size{};
+    uint capacity{};
+    T* array;
+    void resize()
+    {
+        log_event("Resizing stack from %d to %d", capacity, capacity + c_grow_size);
+        capacity += c_grow_size;
+
+        T* resized = new T[capacity];
+        for (uint i = 0; i < size; i ++) {
+            resized[i] = array[i];
+        }
+
+        delete[] array;
+        array = resized;
+    }
 };
 }
 
