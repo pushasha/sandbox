@@ -10,6 +10,7 @@ class Stack {
 public:
     Stack() : Stack(c_default_capacity){}
     explicit Stack(uint initial_capacity);
+    virtual ~Stack();
     void clear();
     bool contains(const Blob& item) const;
     Blob pop();

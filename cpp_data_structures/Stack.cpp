@@ -8,6 +8,13 @@ Collections::Stack::Stack(uint initial_capacity)
     array = new Blob[capacity];
 }
 
+Collections::Stack::~Stack()
+{
+    size = 0;
+    capacity = 0;
+    delete[] array;
+}
+
 void Collections::Stack::clear()
 {
     for (uint i = 0; i < size; i++)
