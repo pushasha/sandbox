@@ -1,6 +1,6 @@
 #include "CommonExceptions.h"
 
-const char* Exceptions::OutOfBoundsException::what() const noexcept
+const char* Exceptions::InvalidOperationException::what() const noexcept
 {
-    return "Index was out-of-bounds.";
+    return msg;
 }

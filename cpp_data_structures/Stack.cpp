@@ -34,7 +34,7 @@ Blob Collections::Stack::pop()
 {
     if (size == 0)
     {
-        throw Exceptions::OutOfBoundsException(0, 0);
+        throw Exceptions::InvalidOperationException("Cannot use pop() on an empty Stack.");
     }
 
     const Blob& to_pop = array[size - 1];
@@ -68,7 +68,7 @@ const Blob& Collections::Stack::peek() const
 {
     if (size == 0)
     {
-        throw Exceptions::OutOfBoundsException(0, 0);
+        throw Exceptions::InvalidOperationException("Cannot use peek() on an empty Stack.");
     }
 
     return array[size - 1];

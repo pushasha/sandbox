@@ -6,15 +6,14 @@
 
 namespace Exceptions
 {
-class OutOfBoundsException : public std::exception {
+class InvalidOperationException : public std::exception {
 public:
-    OutOfBoundsException(uint index, uint size)
-            :index(index), size(size) { }
+    InvalidOperationException(const char* a_msg)
+            :msg(a_msg) { }
 
     const char* what() const noexcept override;
 private:
-    uint index;
-    uint size;
+    const char* msg;
 };
 }
 
