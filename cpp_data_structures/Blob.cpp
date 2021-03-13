@@ -25,7 +25,7 @@ Blob::Blob(int arg)
 Blob::Blob(Blob&& other) noexcept
 {
     log_event("Move-constructing %s to %s", to_string(static_cast<const Blob&>(other)).c_str(), to_string(*this).c_str());
-    *this = std::move(other);
+    member_int = std::exchange(other.member_int, 0);
 }
 
 Blob::Blob(const Blob& other)
@@ -43,7 +43,7 @@ Blob::~Blob()
 Blob& Blob::operator=(Blob&& other) noexcept
 {
     log_event("Move-assigning %s to %s", to_string(static_cast<const Blob&>(other)).c_str(), to_string(*this).c_str());
-    member_int = other.member_int;//std::exchange(other.member_int, 0);
+    member_int = std::exchange(other.member_int, 0);
     return *this;
 }
 

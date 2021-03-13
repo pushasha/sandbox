@@ -8,12 +8,11 @@ int main()
     stack->push(Blob(9));
 
     log("poppin'...");
-    Blob popped = stack->pop();
+    Blob popped(stack->pop());
     log("popped onto &%p", (void*)&popped);
 
-    std::cin.get(); // wait for keypress to end
-
     // Cleanup
+    set_logging_enabled(false);
     delete stack;
     return 0;
 }

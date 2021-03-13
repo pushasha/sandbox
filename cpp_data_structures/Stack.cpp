@@ -50,21 +50,22 @@ Blob Collections::Stack::pop()
     return to_pop;
 }
 
+void Collections::Stack::push(Blob&& item) noexcept
+{
+    if (size == capacity)
+    {
+        resize();
+    }
+
+    array[size] = item;
+    size++;
+}
+
 void Collections::Stack::push(const Blob& item)
 {
     if (size == capacity)
     {
-        log_event("Resizing stack from %d to %d", capacity, capacity + c_grow_size);
-        capacity += c_grow_size;
-
-        Blob* resized = new Blob[capacity];
-        for (uint i = 0; i < size; i++)
-        {
-            resized[i] = array[i];
-        }
-
-        delete[] array;
-        array = resized;
+        resize();
     }
 
     array[size] = item;
@@ -79,4 +80,19 @@ const Blob& Collections::Stack::peek() const
     }
 
     return array[size - 1];
+}
+
+void Collections::Stack::resize()
+{
+    log_event("Resizing stack from %d to %d", capacity, capacity + c_grow_size);
+    capacity += c_grow_size;
+
+    Blob* resized = new Blob[capacity];
+    for (uint i = 0; i < size; i++)
+    {
+        resized[i] = array[i];
+    }
+
+    delete[] array;
+    array = resized;
 }

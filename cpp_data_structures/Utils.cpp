@@ -4,8 +4,15 @@
 #include <cstdarg>
 #include <cstring>
 
+bool logging_enabled = true;
+
 void log(const char* format, ...)
 {
+    if (!logging_enabled)
+    {
+        return;
+    }
+
     size_t len = strlen(format);
     size_t new_len = len + 2; // 2 is num chars in \n\0
 
@@ -27,6 +34,11 @@ void log(const char* format, ...)
 
 void log_event(const char* format, ...)
 {
+    if (!logging_enabled)
+    {
+        return;
+    }
+
     size_t len = strlen(format);
     size_t new_len = len+8; // 8 is num chars in << >>\n\0
 
@@ -52,3 +64,7 @@ void log_event(const char* format, ...)
     delete[] buffer;
 }
 
+void set_logging_enabled(bool enabled)
+{
+    logging_enabled = enabled;
+}

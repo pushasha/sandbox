@@ -14,6 +14,7 @@ public:
     void clear();
     bool contains(const Blob& item) const;
     Blob pop();
+    void push(Blob&& item) noexcept;
     void push(const Blob& item);
     const Blob& peek() const;
     // TODO: add begin/end iterator stuff
@@ -21,6 +22,7 @@ private:
     uint size;
     uint capacity;
     Blob* array;
+    void resize();
 };
 }
 
