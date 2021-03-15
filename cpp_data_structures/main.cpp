@@ -5,13 +5,17 @@
 
 int main()
 {
-    Collections::Stack<Blob>* stack = new Collections::Stack<Blob>(0);
-    Log::log("pushin'...");
+    Log::set_logging_enabled(false);
+    Collections::Stack<Blob>* stack = new Collections::Stack<Blob>(3);
     stack->push(Blob(9));
+    stack->push(Blob(10));
+    stack->push(Blob(11));
+    Log::set_logging_enabled(true);
 
-    Log::log("poppin'...");
-    Blob popped(stack->pop());
-    Log::logf("popped onto &%p", Log::get_mem_address(popped));
+    for (const Blob& b : *stack)
+    {
+        Log::logf("> Found blob at [%p], int = %d", Log::get_mem_address(b), b.get_int());
+    }
 
     // Cleanup
     Log::set_logging_enabled(false);

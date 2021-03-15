@@ -8,106 +8,124 @@
 #include "Log.h"
 
 namespace Collections {
-template<class T>
-class Stack {
-public:
-    Stack():Stack(c_default_capacity) { }
-    explicit Stack(uint initial_capacity)
-    {
-        size = 0;
-        capacity = initial_capacity;
-        array = new T[capacity];
-    }
+    template<class T>
+    class Stack {
+    public:
+        static constexpr const char* c_log_tag = "Stack";
 
-    virtual ~Stack()
-    {
-        size = 0;
-        capacity = 0;
-        delete[] array;
-    }
+        Stack():Stack(c_default_capacity) { }
 
-    void clear()
-    {
-        for (uint i = 0; i < size; i ++) {
-            // Destroy each item, but don't delete!
-            // Delete will give mem back to OS. We want to hold onto it.
-            array[i].~T();
+        explicit Stack(uint initial_capacity)
+        {
+            size = 0;
+            capacity = initial_capacity;
+            array = new T[capacity];
         }
 
-        size = 0;
-    }
+        virtual ~Stack()
+        {
+            size = 0;
+            capacity = 0;
+            delete[] array;
+        }
 
-    bool contains(const T& item) const
-    {
-        for (uint i = 0; i < size; i ++) {
-            if (item == array[i]) {
-                return true;
+        void clear()
+        {
+            for (uint i = 0; i < size; i++) {
+                // Destroy each item, but don't delete!
+                // Delete will give mem back to OS. We want to hold onto it.
+                array[i].~T();
             }
-        }
-        return false;
-    }
 
-    T pop()
-    {
-        if (size == 0) {
-            throw Exceptions::InvalidOperationException("Cannot use pop() on an empty Stack.");
+            size = 0;
         }
 
-        const T& to_pop = array[size - 1];
-        size --;
-
-        return to_pop;
-    }
-
-    void push(T&& item)
-    {
-        if (size == capacity) {
-            resize();
+        bool contains(const T& item) const
+        {
+            for (uint i = 0; i < size; i++) {
+                if (item == array[i]) {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        array[size] = std::forward<T>(item);
-        size ++;
-    }
+        T pop()
+        {
+            if (size == 0) {
+                throw Exceptions::InvalidOperationException("Cannot use pop() on an empty Stack.");
+            }
 
-    void push(const T& item)
-    {
-        if (size == capacity) {
-            resize();
+            const T& to_pop = array[size - 1];
+            size--;
+
+            return to_pop;
         }
 
-        array[size] = item;
-        size ++;
-    }
+        void push(T&& item)
+        {
+            if (size == capacity) {
+                resize();
+            }
 
-    const T& peek() const
-    {
-        if (size == 0) {
-            throw Exceptions::InvalidOperationException("Cannot use peek() on an empty Stack.");
+            array[size] = std::forward<T>(item);
+            size++;
         }
 
-        return array[size - 1];
-    }
-    // TODO: add begin/end iterator stuff
-    static constexpr const char* c_log_tag = "Stack";
-private:
-    uint size{};
-    uint capacity{};
-    T* array;
-    void resize()
-    {
-        Log::logf_event(this, "Start resizing stack from %d to %d", capacity, capacity + c_grow_size);
-        capacity += c_grow_size;
+        void push(const T& item)
+        {
+            if (size == capacity) {
+                resize();
+            }
 
-        T* resized = new T[capacity];
-        for (uint i = 0; i < size; i ++) {
-            resized[i] = std::move(array[i]);
+            array[size] = item;
+            size++;
         }
 
-        delete[] array;
-        array = resized;
-        Log::log_event(this, "Finished resizing stack");
-    }
-};
+        const T& peek() const
+        {
+            if (size == 0) {
+                throw Exceptions::InvalidOperationException("Cannot use peek() on an empty Stack.");
+            }
+
+            return array[size - 1];
+        }
+
+        Iterator<T> begin() const
+        {
+            return Iterator<T>(array + size - 1, next);
+        }
+
+        Iterator<T> end() const
+        {
+            return Iterator<T>(array - 1, next);
+        }
+
+    private:
+        uint size{};
+        uint capacity{};
+        T* array;
+
+        static void next(const T** ptr) // for Iterator
+        {
+            (*ptr)--;
+        }
+
+        void resize()
+        {
+            Log::logf_event(this, "Start resizing stack from %d to %d", capacity, capacity + c_grow_size);
+            capacity += c_grow_size;
+
+            T* resized = new T[capacity];
+            for (uint i = 0; i < size; i++) {
+                resized[i] = std::move(array[i]);
+            }
+
+            delete[] array;
+            array = resized;
+            Log::log_event(this, "Finished resizing stack");
+        }
+    };
 }
 
 #endif //STACK_H

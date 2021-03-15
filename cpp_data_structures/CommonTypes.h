@@ -1,5 +1,5 @@
-#ifndef COMMONTYPES_H
-#define COMMONTYPES_H
+#ifndef COMMON_TYPES_H
+#define COMMON_TYPES_H
 
 typedef char byte;
 typedef unsigned char ubyte;
@@ -7,4 +7,4 @@ typedef unsigned short ushort;
 typedef unsigned int uint;
 typedef unsigned long ulong;
 
-#endif //COMMONTYPES_H
+#endif //COMMON_TYPES_H

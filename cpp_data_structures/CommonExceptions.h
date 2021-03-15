@@ -1,5 +1,5 @@
-#ifndef COMMONEXCEPTIONS_H
-#define COMMONEXCEPTIONS_H
+#ifndef COMMON_EXCEPTIONS_H
+#define COMMON_EXCEPTIONS_H
 
 #include <exception>
 #include "CommonTypes.h"
@@ -17,4 +17,4 @@ private:
 };
 }
 
-#endif //COMMONEXCEPTIONS_H
+#endif //COMMON_EXCEPTIONS_H
