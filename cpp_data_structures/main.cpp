@@ -1,19 +1,20 @@
 #include <iostream>
 #include "Stack.h"
 #include "Blob.h"
+#include "Log.h"
 
 int main()
 {
-    Collections::Stack<Blob>* stack = new Collections::Stack<Blob>(2);
-    log("pushin'...");
+    Collections::Stack<Blob>* stack = new Collections::Stack<Blob>(0);
+    Log::log("pushin'...");
     stack->push(Blob(9));
 
-    log("poppin'...");
+    Log::log("poppin'...");
     Blob popped(stack->pop());
-    log("popped onto &%p", (void*)&popped);
+    Log::logf("popped onto &%p", Log::get_mem_address(popped));
 
     // Cleanup
-    set_logging_enabled(false);
+    Log::set_logging_enabled(false);
     delete stack;
     return 0;
 }

@@ -1,7 +1,7 @@
 #ifndef BLOB_H
 #define BLOB_H
 
-#include "Utils.h"
+#include "Log.h"
 
 // A test class that wraps an int
 class Blob {

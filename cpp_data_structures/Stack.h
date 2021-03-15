@@ -1,17 +1,17 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include <utility>
 #include "CommonTypes.h"
 #include "CollectionsCommon.h"
 #include "CommonExceptions.h"
-#include "Utils.h"
+#include "Log.h"
 
 namespace Collections {
 template<class T>
 class Stack {
 public:
-    Stack()
-            :Stack(c_default_capacity) { }
+    Stack():Stack(c_default_capacity) { }
     explicit Stack(uint initial_capacity)
     {
         size = 0;
@@ -19,7 +19,7 @@ public:
         array = new T[capacity];
     }
 
-    ~Stack()
+    virtual ~Stack()
     {
         size = 0;
         capacity = 0;
@@ -65,7 +65,7 @@ public:
             resize();
         }
 
-        array[size] = item;
+        array[size] = std::forward<T>(item);
         size ++;
     }
 
@@ -88,22 +88,24 @@ public:
         return array[size - 1];
     }
     // TODO: add begin/end iterator stuff
+    static constexpr const char* c_log_tag = "Stack";
 private:
     uint size{};
     uint capacity{};
     T* array;
     void resize()
     {
-        log_event("Resizing stack from %d to %d", capacity, capacity + c_grow_size);
+        Log::logf_event(this, "Start resizing stack from %d to %d", capacity, capacity + c_grow_size);
         capacity += c_grow_size;
 
         T* resized = new T[capacity];
         for (uint i = 0; i < size; i ++) {
-            resized[i] = array[i];
+            resized[i] = std::move(array[i]);
         }
 
         delete[] array;
         array = resized;
+        Log::log_event(this, "Finished resizing stack");
     }
 };
 }
