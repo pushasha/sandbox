@@ -15,6 +15,17 @@ namespace Collections {
 
         Stack():Stack(c_default_capacity) { }
 
+        Stack(const Stack& other)
+        {
+            size = other.size;
+            capacity = other.capacity;
+            array = new T[capacity];
+
+            for (uint i = 0; i < size; i++) {
+                array[i] = other.array[i];
+            }
+        }
+
         explicit Stack(uint initial_capacity)
         {
             size = 0;
@@ -27,6 +38,7 @@ namespace Collections {
             size = 0;
             capacity = 0;
             delete[] array;
+            array = nullptr;
         }
 
         void clear()
@@ -102,8 +114,8 @@ namespace Collections {
         }
 
     private:
-        uint size{};
-        uint capacity{};
+        uint size;
+        uint capacity;
         T* array;
 
         static void next(const T** ptr) // for Iterator
@@ -113,8 +125,8 @@ namespace Collections {
 
         void resize()
         {
-            Log::logf_event(this, "Start resizing stack from %d to %d", capacity, capacity + c_grow_size);
-            capacity += c_grow_size;
+            Log::logf_event(this, "Start resizing stack from %d to %d", capacity, capacity << c_grow_shift);
+            capacity = capacity << c_grow_shift;
 
             T* resized = new T[capacity];
             for (uint i = 0; i < size; i++) {
