@@ -15,10 +15,9 @@ namespace Collections
 
         Iterator(const T* ptr, go_next_func next):ptr(ptr), next(next) { }
 
-        Iterator operator++()
+        void operator++()
         {
             next(&ptr); // go to next item (previous item in stack)
-            return *this;
         }
 
         bool operator!=(const Iterator<T>& other) const
