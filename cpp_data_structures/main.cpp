@@ -1,23 +1,23 @@
 #include <iostream>
-#include "Stack.h"
-#include "Queue.h"
+#include "LinkedList.h"
 #include "Blob.h"
 #include "Log.h"
 
 int main()
 {
-    Collections::Queue<Blob>* queue = new Collections::Queue<Blob>(2);
-    queue->enqueue(Blob(1));
-    queue->enqueue(Blob(2));
-    Log::log("dequeue");
-    Blob aBlob = queue->dequeue();
-    Log::log("enqueue");
-    queue->enqueue(Blob(3));
-    queue->enqueue(Blob(4));
+    Log::set_logging_enabled(false);
+    Collections::LinkedList<Blob>* list = new Collections::LinkedList<Blob>();
+    list -> add(Blob(9));
+    list -> add(Blob(8));
+    list -> add(Blob(7));
+
+    for (const Blob& blob : *list) {
+        std::cout << blob.get_int() << std::endl;
+    }
 
     // Cleanup
-    Log::set_logging_enabled(false);
-    delete queue;
+
+    delete list;
     return 0;
 }
 
