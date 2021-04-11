@@ -103,25 +103,10 @@ namespace Collections {
             return array[size - 1];
         }
 
-        Iterator<T> begin() const
-        {
-            return Iterator<T>(array + size - 1, next);
-        }
-
-        Iterator<T> end() const
-        {
-            return Iterator<T>(array - 1, next);
-        }
-
     private:
         uint size;
         uint capacity;
         T* array;
-
-        static void next(const T** ptr) // for Iterator
-        {
-            (*ptr)--;
-        }
 
         void resize()
         {
