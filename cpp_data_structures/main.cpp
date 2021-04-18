@@ -1,23 +1,27 @@
 #include <iostream>
-#include "LinkedList.h"
+#include "HashSet.h"
 #include "Blob.h"
 #include "Log.h"
 
 int main()
 {
-    Log::set_logging_enabled(false);
-    Collections::LinkedList<Blob>* list = new Collections::LinkedList<Blob>();
-    list -> add(Blob(9));
-    list -> add(Blob(8));
-    list -> add(Blob(7));
+    Collections::HashSet<int> set(5);
 
-    for (const Blob& blob : *list) {
-        std::cout << blob.get_int() << std::endl;
+    set.add(34);
+    set.add(54);
+    set.add(64);
+    set.add(33);
+
+    set.remove(54);
+    set. remove(34);
+
+    for (const int a_int : set) {
+        std::cout << a_int << std::endl;
     }
 
-    // Cleanup
 
-    delete list;
+    // Cleanup
+    Log::set_logging_enabled(false);
     return 0;
 }
 

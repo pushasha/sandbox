@@ -1,6 +1,8 @@
 #ifndef BLOB_H
 #define BLOB_H
 
+#include <functional>
+#include <cstddef>
 #include "Log.h"
 
 // A test class that wraps an int
@@ -20,4 +22,14 @@ private:
     int member_int;
 };
 
+namespace std {
+template <>
+struct hash<Blob>
+{
+  size_t operator()(const Blob& x) const
+  {
+      return std::hash<int>{}(x.get_int());
+  }
+};
+}
 #endif //BLOB_H

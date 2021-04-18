@@ -2,7 +2,6 @@
 #define LOG_H
 
 #include <iostream>
-#include <cstdio>
 #include <cstdarg>
 #include <cstring>
 #include <type_traits>
