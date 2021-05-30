@@ -13,7 +13,7 @@ int main()
     set.add(33);
 
     set.remove(54);
-    set. remove(34);
+    set.remove(34);
 
     for (const int a_int : set) {
         std::cout << a_int << std::endl;

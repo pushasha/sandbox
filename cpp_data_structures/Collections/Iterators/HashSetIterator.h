@@ -47,8 +47,7 @@ public:
 
     bool operator==(const HashSetIterator& other) const
     {
-        return list_itr == other.list_itr
-            && bucket_idx == other.bucket_idx
+        return bucket_idx == other.bucket_idx
             && set == other.set;
     }
 
