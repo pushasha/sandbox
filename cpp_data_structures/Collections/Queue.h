@@ -2,9 +2,9 @@
 #define QUEUE_H
 
 #include <utility>
+#include <stdexcept>
 #include "CommonTypes.h"
 #include "CollectionsCommon.h"
-#include "CommonExceptions.h"
 #include "Log.h"
 
 namespace Collections
@@ -68,7 +68,7 @@ public:
     T dequeue()
     {
         if (size == 0) {
-            throw Exceptions::InvalidOperationException("Cannot use dequeue() on an empty Queue.");
+            throw std::out_of_range("Cannot use dequeue() on an empty Queue.");
         }
 
         const T& to_dequeue = array[head_idx];

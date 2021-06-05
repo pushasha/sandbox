@@ -2,9 +2,9 @@
 #define STACK_H
 
 #include <utility>
+#include <stdexcept>
 #include "CommonTypes.h"
 #include "CollectionsCommon.h"
-#include "CommonExceptions.h"
 #include "Log.h"
 
 namespace Collections {
@@ -65,7 +65,7 @@ namespace Collections {
         T pop()
         {
             if (size == 0) {
-                throw Exceptions::InvalidOperationException("Cannot use pop() on an empty Stack.");
+                throw std::out_of_range("Cannot use pop() on an empty Stack.");
             }
 
             const T& to_pop = array[size - 1];
@@ -97,7 +97,7 @@ namespace Collections {
         const T& peek() const
         {
             if (size == 0) {
-                throw Exceptions::InvalidOperationException("Cannot use peek() on an empty Stack.");
+                throw std::out_of_range("Cannot use peek() on an empty Stack.");
             }
 
             return array[size - 1];

@@ -1,24 +1,13 @@
 #include <iostream>
-#include "HashSet.h"
-#include "Blob.h"
+#include "Sort.h"
 #include "Log.h"
 
 int main()
 {
-    Collections::HashSet<int> set(5);
 
-    set.add(34);
-    set.add(54);
-    set.add(64);
-    set.add(33);
+    int* array = new int[2]{3, 1};
 
-    set.remove(54);
-    set.remove(34);
-
-    for (const int a_int : set) {
-        std::cout << a_int << std::endl;
-    }
-
+    Sort::quick_sort(array, 0, 1);
 
     // Cleanup
     Log::set_logging_enabled(false);
