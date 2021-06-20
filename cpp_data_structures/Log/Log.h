@@ -5,6 +5,7 @@
 #include <cstdarg>
 #include <cstring>
 #include <type_traits>
+#include "CommonTypes.h"
 
 class Log {
 public:
@@ -119,6 +120,20 @@ public:
     static const void* get_mem_address(const T& ref)
     {
         return static_cast<const void*>(&ref);
+    }
+
+    template<class T>
+    static void array_contents(const T* array, uint len)
+    {
+        std::cout << '[';
+        for (int i = 0; i < len; ++i) {
+            std::cout << array[i];
+            if (i != len - 1)
+            {
+                std::cout << ", ";
+            }
+        }
+        std::cout << ']' << std::endl;
     }
 
 private:

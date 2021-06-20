@@ -1,13 +1,14 @@
-#include <iostream>
 #include "Sort.h"
 #include "Log.h"
 
 int main()
 {
 
-    int* array = new int[2]{3, 1};
+    const int array_len = 5;
+    int* array = new int[array_len]{2, 1, 5, 3, 5};
 
-    Sort::quick_sort(array, 0, 1);
+    Sort::quick_sort(array, array_len);
+    Log::array_contents(array, array_len);
 
     // Cleanup
     Log::set_logging_enabled(false);
